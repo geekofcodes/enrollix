@@ -1,10 +1,10 @@
-import Registration from "../models/Registration.js";
+import Enrollment from "../models/Enrollment.js";
 import { Parser } from "json2csv";
 
 // CREATE
-export const createRegistration = async (req, res) => {
+export const createEnrollment = async (req, res) => {
   try {
-    const user = await Registration.create(req.body);
+    const user = await Enrollment.create(req.body);
     res.status(201).json(user);
   } catch (error) {
     if (error.code === 11000) {
@@ -15,9 +15,9 @@ export const createRegistration = async (req, res) => {
 };
 
 // GET ALL
-export const getAllRegistrations = async (req, res) => {
+export const getAllEnrollments = async (req, res) => {
   try {
-    const users = await Registration.find().sort({ createdAt: -1 });
+    const users = await Enrollment.find().sort({ createdAt: -1 });
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -27,7 +27,7 @@ export const getAllRegistrations = async (req, res) => {
 // EXPORT CSV
 export const exportCSV = async (req, res) => {
   try {
-    const users = await Registration.find();
+    const users = await Enrollment.find();
 
     const fields = ["name", "phone", "email", "role", "createdAt"];
     const parser = new Parser({ fields });
@@ -35,7 +35,7 @@ export const exportCSV = async (req, res) => {
     const csv = parser.parse(users);
 
     res.header("Content-Type", "text/csv");
-    res.attachment("registrations.csv");
+    res.attachment("enrollments.csv");
     res.send(csv);
   } catch (error) {
     res.status(500).json({ message: error.message });

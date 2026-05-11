@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 
 import connectDB from "./config/db.js";
-import registrationRoutes from "./routes/registrationRoutes.js";
+import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 
 dotenv.config();
 
@@ -21,10 +21,10 @@ const limiter = rateLimit({
   message: "Too many requests, try again later",
 });
 
-app.use("/api/register", limiter);
+app.use("/api/enroll", limiter);
 
 // 🔥 Routes
-app.use("/api", registrationRoutes);
+app.use("/api", enrollmentRoutes);
 
 // 🔥 DB
 connectDB();
