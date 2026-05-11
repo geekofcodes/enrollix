@@ -49,7 +49,7 @@ Database (MongoDB)
 
 ### 1. Clone the repository
 
-git clone https://github.com/YOUR_USERNAME/enrollix.git
+git clone https://github.com/geekofcodes/enrollix.git
 cd enrollix
 
 ---
