@@ -5,16 +5,17 @@ import rateLimit from "express-rate-limit";
 
 import connectDB from "./config/db.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 
 const app = express();
 
-// 🔥 Middleware
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// 🔥 Rate Limiter (spam protection)
+// Rate Limiter (spam protection)
 const limiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
@@ -23,12 +24,13 @@ const limiter = rateLimit({
 
 app.use("/api/enroll", limiter);
 
-// 🔥 Routes
+// Routes
 app.use("/api", enrollmentRoutes);
+app.use("/api/auth", authRoutes);
 
-// 🔥 DB
+// DB
 connectDB();
 
-// 🔥 Server
+// Server
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
