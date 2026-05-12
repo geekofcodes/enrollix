@@ -58,10 +58,7 @@ export default function EnrollForm() {
         experience: "",
       });
     } catch (err) {
-      const msg =
-        err.response?.data?.message || "Something went wrong. Try again.";
-
-      toast.error(msg);
+      toast.error(err);
     } finally {
       setLoading(false);
     }
