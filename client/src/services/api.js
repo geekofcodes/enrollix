@@ -47,6 +47,23 @@ export const getEnrollments = async () => {
 };
 
 // Export CSV
-export const exportCSV = () => {
-  window.open(`${import.meta.env.VITE_API_URL}/export`, "_blank");
+export const exportCSV = async () => {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/export`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "enrollments.csv";
+  a.click();
 };

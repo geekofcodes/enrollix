@@ -1,4 +1,5 @@
 import express from "express";
+import { protect } from "../middleware/authMiddleware.js";
 import {
   createEnrollment,
   getAllEnrollments,
@@ -8,7 +9,7 @@ import {
 const router = express.Router();
 
 router.post("/enroll", createEnrollment);
-router.get("/enrollments", getAllEnrollments);
-router.get("/export", exportCSV);
+router.get("/enrollments", protect, getAllEnrollments);
+router.get("/export", protect, exportCSV);
 
 export default router;
