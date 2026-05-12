@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { enrollUser } from "../services/api";
 import toast from "react-hot-toast";
 
 export default function EnrollForm() {
@@ -41,7 +41,7 @@ export default function EnrollForm() {
     try {
       setLoading(true);
 
-      await axios.post("http://localhost:5000/api/enroll", {
+      await enrollUser({
         ...form,
         name: form.name.trim(),
         phone: form.phone.trim(),
