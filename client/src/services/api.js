@@ -13,6 +13,15 @@ api.interceptors.response.use(
   }
 );
 
+// Login API
+export const loginAdmin = async (data) => {
+  const res = await api.post("/auth/login", data);
+
+  localStorage.setItem("token", res.data.token);
+
+  return res.data;
+};
+
 // Enroll API
 export const enrollUser = async (data) => {
   const res = await api.post("/enroll", data);
