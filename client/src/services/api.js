@@ -19,10 +19,15 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error === "Invalid token" || error === "Not authorized") {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+
     return Promise.reject(
-      error.response?.data?.message || "Something went wrong"
+      error.response?.data?.message || "Something went wrong",
     );
-  }
+  },
 );
 
 // Login API
@@ -50,14 +55,11 @@ export const getEnrollments = async () => {
 export const exportCSV = async () => {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/export`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/export`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   const blob = await response.blob();
   const url = window.URL.createObjectURL(blob);

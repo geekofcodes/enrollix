@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getEnrollments, exportCSV } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../services/auth";
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEntrollments = async () => {
@@ -20,9 +23,23 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-slate-950 text-white px-6 py-10">
       {/* HEADER */}
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-semibold">Admin Dashboard</h1>
-        <p className="text-gray-400 mt-2">Manage and monitor all enrollments</p>
+      <div className="max-w-6xl mx-auto flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-semibold">Admin Dashboard</h1>
+          <p className="text-gray-400 mt-2">
+            Manage and monitor all enrollments
+          </p>
+        </div>
+
+        <button
+          onClick={() => {
+            logout();
+            navigate("/login");
+          }}
+          className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm transition"
+        >
+          Logout
+        </button>
       </div>
 
       {/* STATS */}
