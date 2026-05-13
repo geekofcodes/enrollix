@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { enrollUser } from "../services/api";
 import toast from "react-hot-toast";
+import { api } from "../services/api";
 
 export default function EnrollForm() {
   const [form, setForm] = useState({
@@ -17,20 +18,17 @@ export default function EnrollForm() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // 🔥 Validation
+  // Validation
   const validate = () => {
     if (!form.name.trim()) return "Full name is required";
     if (!form.phone.trim()) return "Phone number is required";
-    if (!/^\d{10}$/.test(form.phone))
-      return "Phone must be exactly 10 digits";
+    if (!/^\d{10}$/.test(form.phone)) return "Phone must be exactly 10 digits";
 
     return null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (loading) return;
 
     const error = validate();
     if (error) {
@@ -41,22 +39,49 @@ export default function EnrollForm() {
     try {
       setLoading(true);
 
-      await enrollUser({
-        ...form,
-        name: form.name.trim(),
-        phone: form.phone.trim(),
-      });
+      // 1. Create order
+      const { data: order } = await api.post("/payment/create-order");
 
-      toast.success("🎉 Enrolled successfully!");
+      // 2. Open Razorpay
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.id,
 
-      setForm({
-        name: "",
-        phone: "",
-        email: "",
-        age: "",
-        role: "",
-        experience: "",
-      });
+        handler: async function (response) {
+          try {
+            // 3. Verify payment
+            await api.post("/payment/verify", response);
+
+            // 4. Save enrollment ONLY after payment
+            await enrollUser({
+              ...form,
+              paymentId: response.razorpay_payment_id,
+            });
+
+            toast.success("🎉 Enrollment successful!");
+
+            setForm({
+              name: "",
+              phone: "",
+              email: "",
+              age: "",
+              role: "",
+              experience: "",
+            });
+          } catch (err) {
+            toast.error("Payment verification failed");
+          }
+        },
+
+        theme: {
+          color: "#2563eb",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
       toast.error(err);
     } finally {
@@ -153,7 +178,7 @@ export default function EnrollForm() {
               : "bg-blue-600 hover:bg-blue-700 hover:scale-105"
           }`}
         >
-          {loading ? "Submitting..." : "Enroll 🚀"}
+          {loading ? "Processing..." : "Proceed to Payment 💳"}
         </button>
       </form>
     </div>

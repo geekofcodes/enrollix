@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import connectDB from "./config/db.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ app.use("/api/enroll", limiter);
 // Routes
 app.use("/api", enrollmentRoutes);
 app.use("/api/auth", authRoutes);
-
+app.use("/api/payment", paymentRoutes);
 // DB
 connectDB();
 

@@ -4,13 +4,23 @@ import { Parser } from "json2csv";
 // CREATE
 export const createEnrollment = async (req, res) => {
   try {
-    const user = await Enrollment.create(req.body);
-    res.status(201).json(user);
-  } catch (error) {
-    if (error.code === 11000) {
-      return res.status(400).json({ message: "Phone already registered" });
+    const { name, phone, role, paymentId } = req.body;
+
+    if (!paymentId) {
+      return res.status(400).json({ message: "Payment required" });
     }
-    res.status(500).json({ message: error.message });
+
+    const enrollment = await Enrollment.create({
+      name,
+      phone,
+      role,
+      paymentId,
+    });
+
+    res.json(enrollment);
+
+  } catch (err) {
+    res.status(500).json({ message: "Error saving enrollment" });
   }
 };
 
