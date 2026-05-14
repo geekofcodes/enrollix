@@ -20,6 +20,12 @@ export default function Admin() {
     fetchEntrollments();
   }, []);
 
+  const totalUsers = users.length;
+
+  const paidUsers = users.filter((u) => u.paymentId).length;
+
+  const totalRevenue = paidUsers * 500; // ₹500 per user
+
   return (
     <div className="min-h-screen bg-slate-950 text-white px-6 py-10">
       {/* HEADER */}
@@ -43,25 +49,25 @@ export default function Admin() {
       </div>
 
       {/* STATS */}
-      <div className="max-w-6xl mx-auto mt-8 grid md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto mt-8 grid md:grid-cols-4 gap-6">
         <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
           <p className="text-gray-400 text-sm">Total Enrollments</p>
-          <h2 className="text-2xl font-semibold mt-2">{users.length}</h2>
+          <h2 className="text-2xl font-semibold mt-2">{totalUsers}</h2>
+        </div>
+
+        <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
+          <p className="text-gray-400 text-sm">Paid Users</p>
+          <h2 className="text-2xl font-semibold mt-2">{paidUsers}</h2>
+        </div>
+
+        <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
+          <p className="text-gray-400 text-sm">Revenue</p>
+          <h2 className="text-2xl font-semibold mt-2">₹{totalRevenue}</h2>
         </div>
 
         <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
           <p className="text-gray-400 text-sm">Latest Entry</p>
           <h2 className="text-sm mt-2">{users[0]?.name || "—"}</h2>
-        </div>
-
-        <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
-          <p className="text-gray-400 text-sm">Data Export</p>
-          <button
-            onClick={exportCSV}
-            className="mt-3 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm transition"
-          >
-            Export CSV
-          </button>
         </div>
       </div>
 
@@ -74,6 +80,7 @@ export default function Admin() {
               <th className="text-left px-6 py-3">Phone</th>
               <th className="text-left px-6 py-3">Role</th>
               <th className="text-left px-6 py-3">Date</th>
+              <th className="text-left px-6 py-3">Payment</th>
             </tr>
           </thead>
 
@@ -88,6 +95,13 @@ export default function Admin() {
                 <td className="px-6 py-4">{user.role || "-"}</td>
                 <td className="px-6 py-4 text-gray-400">
                   {new Date(user.createdAt).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4">
+                  {user.paymentId ? (
+                    <span className="text-green-400 font-medium">Paid</span>
+                  ) : (
+                    <span className="text-red-400">Pending</span>
+                  )}
                 </td>
               </tr>
             ))}

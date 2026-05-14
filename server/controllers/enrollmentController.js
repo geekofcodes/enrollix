@@ -39,7 +39,7 @@ export const exportCSV = async (req, res) => {
   try {
     const users = await Enrollment.find();
 
-    const fields = ["name", "phone", "email", "role", "createdAt"];
+    const fields = ["name", "phone", "email", "role", "paymentId", "createdAt"];
     const parser = new Parser({ fields });
 
     const csv = parser.parse(users);
