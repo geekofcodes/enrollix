@@ -18,15 +18,36 @@ export const sendConfirmationEmail = async (user) => {
         ],
         subject: "🎉 Enrollment Confirmed - Enrollix",
         htmlContent: `
-          <h2>Enrollment Successful 🎉</h2>
-          <p>Hi ${user.name},</p>
-          <p>Your registration is confirmed.</p>
+          <div style="font-family: Inter, Arial; background:#f9fafb; padding:30px;">
+            <div style="max-width:480px; margin:auto; background:white; border-radius:12px; padding:24px; box-shadow:0 10px 25px rgba(0,0,0,0.05);">
+              
+              <h2 style="color:#2563eb; margin-bottom:0;">Enrollix 🎉</h2>
+              <p style="margin-top:5px; color:#6b7280;">Payment successful</p>
 
-          <p><strong>Role:</strong> ${user.role || "-"}</p>
-          <p><strong>Payment ID:</strong> ${user.paymentId}</p>
+              <hr style="margin:20px 0; border:none; border-top:1px solid #eee;" />
 
-          <br/>
-          <p>Thank you for joining Enrollix 🚀</p>
+              <p>Hi <b>${user.name}</b>,</p>
+              <p>Your enrollment has been successfully completed.</p>
+
+              <div style="background:#f3f4f6; padding:16px; border-radius:8px; margin:20px 0;">
+                <p style="margin:0;"><b>Role:</b> ${user.role}</p>
+                <p style="margin:0;"><b>Amount:</b> ₹${user.amount}</p>
+                <p style="margin:0;"><b>Payment ID:</b> ${user.paymentId}</p>
+              </div>
+
+              <div style="text-align:center; margin-top:20px;">
+                <a href="${process.env.FRONTEND_URL}/success"
+                  style="background:#2563eb; color:white; padding:10px 20px; border-radius:6px; text-decoration:none;">
+                  View Details
+                </a>
+              </div>
+
+              <p style="margin-top:30px; font-size:12px; color:#9ca3af; text-align:center;">
+                Need help? Just reply to this email.
+              </p>
+
+            </div>
+          </div>
         `,
       },
       {
@@ -34,7 +55,7 @@ export const sendConfirmationEmail = async (user) => {
           "api-key": process.env.BREVO_API_KEY,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   } catch (err) {
     console.error("Email error:", err.response?.data || err.message);
