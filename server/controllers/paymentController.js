@@ -2,6 +2,7 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import dotenv from "dotenv";
 import { sendConfirmationEmail } from "../services/emailService.js";
+import { generateReceipt } from "../services/pdfService.js";
 import Enrollment from "../models/Enrollment.js";
 
 dotenv.config();
@@ -73,5 +74,21 @@ export const verifyPayment = async (req, res) => {
     }
   } else {
     res.status(400).json({ success: false });
+  }
+};
+
+export const downloadReceipt = async (req, res) => {
+  try {
+    const { paymentId } = req.params;
+
+    const user = await Enrollment.findOne({ paymentId });
+
+    if (!user) {
+      return res.status(404).json({ message: "Receipt not found" });
+    }
+
+    generateReceipt(res, user);
+  } catch (err) {
+    res.status(500).json({ message: "Error generating receipt" });
   }
 };
