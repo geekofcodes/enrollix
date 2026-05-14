@@ -43,7 +43,7 @@ export default function Landing() {
             </button>
 
             <button
-              onClick={() => navigate("/admin-xyz123")}
+              onClick={() => navigate("/admin")}
               className="border border-white/20 px-6 py-3 rounded-lg hover:bg-white/10 transition"
             >
               View Admin
