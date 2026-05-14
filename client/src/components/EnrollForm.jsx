@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { enrollUser } from "../services/api";
 import toast from "react-hot-toast";
 import { api } from "../services/api";
 
 export default function EnrollForm() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -60,7 +62,12 @@ export default function EnrollForm() {
               paymentId: response.razorpay_payment_id,
             });
 
-            toast.success("🎉 Enrollment successful!");
+            navigate("/success", {
+              state: {
+                name: form.name,
+                paymentId: response.razorpay_payment_id,
+              },
+            });
 
             setForm({
               name: "",
