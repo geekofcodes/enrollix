@@ -54,13 +54,18 @@ export default function EnrollForm() {
         handler: async function (response) {
           try {
             // 3. Verify payment
-            await api.post("/payment/verify", response);
+            await api.post("/payment/verify", {
+              ...form,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            });
 
             // 4. Save enrollment ONLY after payment
-            await enrollUser({
-              ...form,
-              paymentId: response.razorpay_payment_id,
-            });
+            // await enrollUser({
+            //   ...form,
+            //   paymentId: response.razorpay_payment_id,
+            // });
 
             navigate("/success", {
               state: {

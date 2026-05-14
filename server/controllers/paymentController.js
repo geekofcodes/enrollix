@@ -1,6 +1,9 @@
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import dotenv from "dotenv";
+import { sendConfirmationEmail } from "../services/emailService.js";
+import Enrollment from "../models/Enrollment.js";
+
 dotenv.config();
 
 const razorpay = new Razorpay({
@@ -24,9 +27,18 @@ export const createOrder = async (req, res) => {
   }
 };
 
-export const verifyPayment = (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-    req.body;
+export const verifyPayment = async (req, res) => {
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    name,
+    phone,
+    email,
+    age,
+    role,
+    experience,
+  } = req.body;
 
   const body = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -36,7 +48,29 @@ export const verifyPayment = (req, res) => {
     .digest("hex");
 
   if (expectedSignature === razorpay_signature) {
-    res.json({ success: true });
+    try {
+      const user = await Enrollment.create({
+        name,
+        phone,
+        email,
+        age,
+        role,
+        experience,
+        paymentId: razorpay_payment_id,
+        orderId: razorpay_order_id,
+        paymentStatus: "Paid",
+        amount: 500,
+      });
+
+      if (user.email) {
+        await sendConfirmationEmail(user);
+      }
+
+      res.json({ success: true });
+    } catch (err) {
+      console.error("DB Error:", err);
+      res.status(500).json({ message: "Error saving enrollment" });
+    }
   } else {
     res.status(400).json({ success: false });
   }
