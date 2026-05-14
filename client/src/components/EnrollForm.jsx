@@ -61,12 +61,6 @@ export default function EnrollForm() {
               razorpay_signature: response.razorpay_signature,
             });
 
-            // 4. Save enrollment ONLY after payment
-            // await enrollUser({
-            //   ...form,
-            //   paymentId: response.razorpay_payment_id,
-            // });
-
             navigate("/success", {
               state: {
                 name: form.name,
