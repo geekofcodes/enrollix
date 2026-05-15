@@ -17,6 +17,7 @@ import {
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
   const [paymentFilter, setPaymentFilter] = useState("All");
@@ -29,12 +30,17 @@ export default function Admin() {
   useEffect(() => {
     const fetchEntrollments = async () => {
       try {
+        setLoading(true);
+
         const result = await getEnrollments();
         setUsers(result);
       } catch (error) {
         console.error("Error fetching enrollments:", error);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchEntrollments();
   }, []);
 
@@ -262,7 +268,7 @@ export default function Admin() {
 
           <button
             onClick={clearFilters}
-            disabled={!isFilterActive}
+            disabled={!isFilterActive || loading}
             className="px-4 py-2 border border-white/20 rounded-lg"
           >
             Clear Filters
@@ -271,6 +277,7 @@ export default function Admin() {
 
         <button
           onClick={() => exportCSV(filteredUsers)}
+          disabled={loading || users.length === 0}
           className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm transition"
         >
           Export CSV
@@ -290,24 +297,28 @@ export default function Admin() {
             </tr>
           </thead>
 
-          <tbody>
-            {currentUsers.map((user) => (
-              <tr key={user._id} className="border-t border-white/10">
-                <td className="px-6 py-4">{user.name}</td>
-                <td className="px-6 py-4">{user.phone}</td>
-                <td className="px-6 py-4">{user.role}</td>
-                <td className="px-6 py-4 text-gray-400">
-                  {new Date(user.createdAt).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                  })}
-                </td>
-                <td className="px-6 py-4">
-                  {user.paymentId ? "Paid" : "Pending"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          {loading ? (
+            <TableSkeleton />
+          ) : (
+            <tbody>
+              {currentUsers.map((user) => (
+                <tr key={user._id} className="border-t border-white/10">
+                  <td className="px-6 py-4">{user.name}</td>
+                  <td className="px-6 py-4">{user.phone}</td>
+                  <td className="px-6 py-4">{user.role}</td>
+                  <td className="px-6 py-4 text-gray-400">
+                    {new Date(user.createdAt).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </td>
+                  <td className="px-6 py-4">
+                    {user.paymentId ? "Paid" : "Pending"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          )}
         </table>
       </div>
       <div className="flex justify-center mt-6 gap-3">
@@ -332,6 +343,32 @@ export default function Admin() {
         </button>
       </div>
     </div>
+  );
+}
+
+function TableSkeleton() {
+  return (
+    <tbody>
+      {[...Array(5)].map((_, i) => (
+        <tr key={i} className="border-t border-white/10 animate-pulse">
+          <td className="px-6 py-4">
+            <div className="h-4 bg-white/10 rounded w-24"></div>
+          </td>
+          <td className="px-6 py-4">
+            <div className="h-4 bg-white/10 rounded w-20"></div>
+          </td>
+          <td className="px-6 py-4">
+            <div className="h-4 bg-white/10 rounded w-16"></div>
+          </td>
+          <td className="px-6 py-4">
+            <div className="h-4 bg-white/10 rounded w-20"></div>
+          </td>
+          <td className="px-6 py-4">
+            <div className="h-4 bg-white/10 rounded w-16"></div>
+          </td>
+        </tr>
+      ))}
+    </tbody>
   );
 }
 
