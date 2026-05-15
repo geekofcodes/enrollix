@@ -159,10 +159,12 @@ export default function EnrollForm() {
             disabled={loading}
             className="w-full p-3 rounded-lg bg-white/10 border border-white/20 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
           >
-            <option value="">Select Role</option>
-            <option>Dancer</option>
-            <option>Singer</option>
-            <option>Musician</option>
+            <option value="" className="bg-slate-800 placeholder-gray-300">
+              Select Role
+            </option>
+            <option className="bg-slate-800 text-white">Dancer</option>
+            <option className="bg-slate-800 text-white">Singer</option>
+            <option className="bg-slate-800 text-white">Musician</option>
           </select>
 
           <textarea
