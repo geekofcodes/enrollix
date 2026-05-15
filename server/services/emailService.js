@@ -1,9 +1,12 @@
 import axios from "axios";
 import dotenv from "dotenv";
+import { generateReceiptBuffer } from "./pdfService.js";
+
 dotenv.config();
 
 export const sendConfirmationEmail = async (user) => {
   try {
+    const pdfBuffer = await generateReceiptBuffer(user);
     await axios.post(
       "https://api.brevo.com/v3/smtp/email",
       {
@@ -49,6 +52,12 @@ export const sendConfirmationEmail = async (user) => {
             </div>
           </div>
         `,
+        attachment: [
+          {
+            name: `receipt-${user.paymentId}.pdf`,
+            content: pdfBuffer.toString("base64"),
+          },
+        ],
       },
       {
         headers: {
