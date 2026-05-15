@@ -10,6 +10,6 @@ const router = express.Router();
 
 router.post("/enroll", createEnrollment);
 router.get("/enrollments", protect, getAllEnrollments);
-router.get("/export", protect, exportCSV);
+router.post("/export", protect, exportCSV);
 
 export default router;

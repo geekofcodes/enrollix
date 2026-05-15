@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getEnrollments } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/auth";
+import { exportCSV } from "../services/api";
 import {
   BarChart,
   Bar,
@@ -218,42 +219,61 @@ export default function Admin() {
       </div>
 
       {/* FILTERS */}
-      <div className="max-w-6xl mx-auto mt-8 flex flex-wrap gap-4 items-center">
-        <input
-          type="text"
-          placeholder="Search name or phone..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="px-4 py-2 rounded-lg bg-white/10 border border-white/20"
-        />
+      <div className="max-w-6xl mx-auto mt-8 flex flex-wrap gap-4 items-center justify-between">
+        <div className="flex flex-wrap gap-4 items-center">
+          <input
+            type="text"
+            placeholder="Search name or phone..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-white/10 border border-white/20"
+          />
 
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="px-4 py-2 rounded-lg bg-slate-800 text-white"
-        >
-          <option>All</option>
-          <option>Singer</option>
-          <option>Dancer</option>
-          <option>Musician</option>
-        </select>
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-slate-800 text-white"
+          >
+            <option>All</option>
+            <option>Singer</option>
+            <option>Dancer</option>
+            <option>Musician</option>
+          </select>
 
-        <select
-          value={paymentFilter}
-          onChange={(e) => setPaymentFilter(e.target.value)}
-          className="px-4 py-2 rounded-lg bg-slate-800 text-white"
-        >
-          <option>All</option>
-          <option>Paid</option>
-          <option>Pending</option>
-        </select>
+          <select
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-slate-800 text-white"
+          >
+            <option>All</option>
+            <option>Paid</option>
+            <option>Pending</option>
+          </select>
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-slate-800 text-white border border-white/20"
+          >
+            <option value="latest">Latest</option>
+            <option value="oldest">Oldest</option>
+            <option value="name">Name</option>
+          </select>
+
+          <button
+            onClick={clearFilters}
+            disabled={!isFilterActive}
+            className="px-4 py-2 border border-white/20 rounded-lg"
+          >
+            Clear Filters
+          </button>
+        </div>
 
         <button
-          onClick={clearFilters}
-          disabled={!isFilterActive}
-          className="px-4 py-2 border border-white/20 rounded-lg"
+          onClick={() => exportCSV(filteredUsers)}
+          className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm transition"
         >
-          Clear Filters
+          Export CSV
         </button>
       </div>
 
@@ -289,6 +309,27 @@ export default function Admin() {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-center mt-6 gap-3">
+        <button
+          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+          className="px-4 py-2 bg-white/10 rounded-lg"
+        >
+          Prev
+        </button>
+
+        <span className="px-4 py-2 text-gray-300">Page {currentPage}</span>
+
+        <button
+          onClick={() =>
+            setCurrentPage((p) =>
+              indexOfLast < filteredUsers.length ? p + 1 : p,
+            )
+          }
+          className="px-4 py-2 bg-white/10 rounded-lg"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

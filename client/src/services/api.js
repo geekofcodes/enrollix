@@ -52,14 +52,20 @@ export const getEnrollments = async () => {
 };
 
 // Export CSV
-export const exportCSV = async () => {
+export const exportCSV = async (data) => {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/export`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/export`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
 
   const blob = await response.blob();
   const url = window.URL.createObjectURL(blob);

@@ -37,15 +37,22 @@ export const getAllEnrollments = async (req, res) => {
 // EXPORT CSV
 export const exportCSV = async (req, res) => {
   try {
-    const users = await Enrollment.find();
+    const users = req.body;
 
-    const fields = ["name", "phone", "email", "role", "paymentId", "createdAt"];
+    const fields = [
+      "name",
+      "phone",
+      "email",
+      "role",
+      "paymentId",
+      "createdAt",
+    ];
+
     const parser = new Parser({ fields });
-
     const csv = parser.parse(users);
 
     res.header("Content-Type", "text/csv");
-    res.attachment("enrollments.csv");
+    res.attachment("filtered-enrollments.csv");
     res.send(csv);
   } catch (error) {
     res.status(500).json({ message: error.message });
